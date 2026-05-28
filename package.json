@@ -1,0 +1,28 @@
+{
+  "name": "yui-ebay-auto",
+  "version": "1.0.0",
+  "description": "eBay dropshipping automation - stock monitor, auto-stop, LINE alert",
+  "scripts": {
+    "dev": "node --use-system-ca ./node_modules/next/dist/bin/next dev",
+    "build": "next build",
+    "start": "node --use-system-ca ./node_modules/next/dist/bin/next start",
+    "check-stock": "node --use-system-ca src/monitors/runCheck.js",
+    "test-line": "node --use-system-ca src/services/testLineNotify.js",
+    "test-supabase": "node --use-system-ca src/services/testSupabase.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "dotenv": "^16.4.0",
+    "next": "^14.2.0",
+    "node-fetch": "^3.3.2",
+    "playwright": "^1.45.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0"
+  },
+  "type": "module"
+}
