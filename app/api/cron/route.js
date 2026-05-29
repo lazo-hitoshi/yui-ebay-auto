@@ -6,10 +6,22 @@ import { runStockCheck } from "../../../src/monitors/stockEngine.js";
 
 export const maxDuration = 300; // 最大5分（500品チェック用）
 
+function isAuthorizedCron(request) {
+  const secret = process.env.CRON_SECRET?.trim();
+  if (!secret) return false;
+
+  const authHeader = request.headers.get("authorization")?.trim();
+  if (authHeader === `Bearer ${secret}`) return true;
+
+  // cron-job.org 等: Bearer の打ち間違いを避ける代替ヘッダー
+  const cronHeader = request.headers.get("x-cron-secret")?.trim();
+  if (cronHeader === secret) return true;
+
+  return false;
+}
+
 export async function GET(request) {
-  // Cron Secretで認証（外部から勝手に叩かれないように）
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!isAuthorizedCron(request)) {
     return new Response("Unauthorized", { status: 401 });
   }
 
