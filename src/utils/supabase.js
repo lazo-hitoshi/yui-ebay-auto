@@ -35,7 +35,7 @@ export const supabase = createClient(supabaseUrl || "", supabaseKey || "");
 //
 // CREATE TABLE stock_logs (
 //   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-//   product_id UUID REFERENCES products(id),
+//   product_id UUID REFERENCES products(id) ON DELETE CASCADE,
 //   event TEXT NOT NULL,                  -- 'stockout' | 'restock' | 'price_change' | 'error'
 //   details JSONB,                        -- 詳細情報
 //   created_at TIMESTAMPTZ DEFAULT now()

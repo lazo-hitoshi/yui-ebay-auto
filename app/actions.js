@@ -147,6 +147,17 @@ export async function deleteProduct(productId) {
   }
 
   const supabase = createAdminClient();
+
+  // stock_logs が残っていると products の削除で FK エラーになる
+  const { error: logsError } = await supabase
+    .from("stock_logs")
+    .delete()
+    .eq("product_id", productId);
+
+  if (logsError) {
+    return { ok: false, error: logsError.message };
+  }
+
   const { error } = await supabase.from("products").delete().eq("id", productId);
 
   if (error) {

@@ -74,7 +74,7 @@ CREATE TABLE products (
 
 CREATE TABLE stock_logs (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  product_id UUID REFERENCES products(id),
+  product_id UUID REFERENCES products(id) ON DELETE CASCADE,
   event TEXT NOT NULL,
   details JSONB,
   created_at TIMESTAMPTZ DEFAULT now()

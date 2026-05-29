@@ -4,6 +4,8 @@ import Dashboard from "./components/Dashboard.js";
 import { calculateProfit } from "../src/utils/profitCalculator.js";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 async function loadDashboardData() {
   try {

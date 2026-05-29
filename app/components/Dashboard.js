@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   createProduct,
   deleteProduct,
@@ -57,6 +58,19 @@ export default function Dashboard({
   const [sellerUrl, setSellerUrl] = useState("");
   const [sellerRatingCount, setSellerRatingCount] = useState("");
   const [supplierUrlForFetch, setSupplierUrlForFetch] = useState("");
+  const [lastRefreshedAt, setLastRefreshedAt] = useState(() => new Date());
+  const router = useRouter();
+
+  const refreshDashboard = useCallback(() => {
+    router.refresh();
+    setLastRefreshedAt(new Date());
+  }, [router]);
+
+  // 他端末（タブレット等）でも変更が届くよう、60秒ごとに再取得
+  useEffect(() => {
+    const timer = setInterval(refreshDashboard, 60_000);
+    return () => clearInterval(timer);
+  }, [refreshDashboard]);
 
   function updateProfitField(name, value) {
     setProfitForm((prev) => ({ ...prev, [name]: value }));
@@ -101,6 +115,7 @@ export default function Dashboard({
         setSellerUrl("");
         setSellerRatingCount("");
         setSupplierUrlForFetch("");
+        refreshDashboard();
       } else {
         showError(res.error);
       }
@@ -111,8 +126,10 @@ export default function Dashboard({
     if (!confirm(`「${title}」を削除しますか？`)) return;
     startTransition(async () => {
       const res = await deleteProduct(id);
-      if (res.ok) showSuccess("商品を削除しました");
-      else showError(res.error);
+      if (res.ok) {
+        showSuccess("商品を削除しました");
+        refreshDashboard();
+      } else showError(res.error);
     });
   }
 
@@ -154,6 +171,7 @@ export default function Dashboard({
       if (res.ok) {
         setCheckResult(res.result);
         showSuccess("在庫チェックが完了しました");
+        refreshDashboard();
       } else {
         showError(res.error || "在庫チェックに失敗しました");
       }
@@ -190,6 +208,18 @@ export default function Dashboard({
             >
               {pending ? "実行中..." : "今すぐ在庫チェック"}
             </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={refreshDashboard}
+              disabled={pending}
+            >
+              一覧を更新
+            </button>
+            <span className="refresh-hint">
+              最終更新: {formatDate(lastRefreshedAt.toISOString())}
+              （60秒ごとに自動更新）
+            </span>
           </div>
 
           {checkResult && (

@@ -77,6 +77,12 @@ a {
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 16px;
+  align-items: center;
+}
+
+.refresh-hint {
+  font-size: 0.85rem;
+  color: var(--muted, #64748b);
 }
 
 .btn {
